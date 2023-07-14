@@ -193,8 +193,9 @@ a {
 	width: 57%; 
 	float: left;
 	font-size: 60pt;
-	color: #ffffff;
+	color: #fdfbfb;
 	text-align: right;
+   
 }
 
 .ram{ width: 45%; float: left; }
