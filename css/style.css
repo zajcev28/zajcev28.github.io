@@ -143,13 +143,15 @@ a {
 }
 
 .header_section{
-	width: 100%; 
-	float: left;
+
+    
 	background-image: url(../images/startowe.jpg);
-	height: auto;
+    width: 100%; 
+	float: left;
+	height: 100%;
 	padding-top: 20px;	
-	background-size: cover;
-    background-repeat: no-repeat;
+	background-size:cover;
+    background-position: 0%;
 }
 
 .active{ 
