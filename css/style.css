@@ -264,7 +264,7 @@ a {
 .about_taital_1{
   width: 100%;
   float: left;
-  font-size: 50pt;
+  font-size: 40pt;
   text-align: right;
   margin-top: 70px;
 
@@ -594,6 +594,7 @@ button.btn.btn-primary, button.btn.btn-primary:hover, button.btn.btn-primary:foc
 }
 .map_text{
 	padding-left: 30px;
+    font-size: large;
 
 }
 
