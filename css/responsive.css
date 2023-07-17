@@ -236,7 +236,7 @@ width: 41%;
 .consectetur_text { width: 76%; font-size: 21pt; line-height: 30px; }
 .read_bt { font-size: 20pt; height: 60px; }
 .banner_bt { width: 43%;}
-.numbar_text { width: 15%;}
+.numbar_text { width: 15%; display: none;}
 .about_taital { font-size: 60px; }
 .magna_text { font-size: 16pt; line-height: 30px; }
 .more_bt { width: 30%; height: 60px;}
@@ -313,7 +313,7 @@ width: 55%;
 }
 .ram { width: 100%; }
 .consectetur_text { font-size: 18pt; line-height: 30px; margin-left: 0px;} 
-.numbar_text { width: 20%;}
+.numbar_text { width: 20%; display: none;}
 .read_bt { width: 80%; height: 70px; font-size: 20pt; }
 .about_taital { font-size: 46px;}
 .magna_text { font-size: 14pt; line-height: 21px;}
@@ -417,7 +417,7 @@ ul.link li {
 .taital { width: 100%; font-size: 40pt; text-align: left;}
 .ram { width: 100%;}
 .consectetur_text { font-size: 16pt; line-height: 30px;}
-.numbar_text { width: 20%;}
+.numbar_text { width: 20%; display: none;}
 .about_taital { font-size: 46px;}
 .about_taital_1 { font-size: 46px;}
 .magna_text { font-size: 13pt; line-height: 20px;}
