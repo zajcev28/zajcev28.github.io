@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Matematyczne Bomby</title>
+
+    <!-- Manifest dla PWA -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Ikona aplikacji -->
+    <link rel="icon" href="icon.png">
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background: #f1f1f1;
+        }
+        #game-container {
+            margin-top: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Witaj, Daniel! 👋</h1>
+    <p>Przygotuj się na Matematyczne Bomby! 💣</p>
+
+    <div id="game-container">
+        <p>Gra się ładuje...</p>
+    </div>
+
+    <script src="game.js"></script>
+
+    <!-- Service Worker -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js");
+        }
+    </script>
+</body>
+</html>
