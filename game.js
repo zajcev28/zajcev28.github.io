@@ -118,6 +118,7 @@ function endGame() {
 }
 
 // --- Klawiatura ---
+const inputField = document.getElementById('answeInput');
 inputBox.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
         const val = parseInt(e.target.value);
@@ -154,3 +155,4 @@ micBtn.addEventListener('click', () => {
 
     recognition.start();
 });
+
