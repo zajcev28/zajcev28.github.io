@@ -34,10 +34,17 @@
     <p>Przygotuj się na Matematyczne Bomby! 💣</p>
 
     <div id="game-container">
+        <div id="menu">
+            <button onclick=startGame()> 
+                Start game </button>
+        </div>
+    <canvas id="gameCanvas" width="800" height="600"
+        style="display:none"; border:1px solid #ccc;">
+    <div id="scoreboard">Punkty: 0</div>
+    
         <p>Gra się ładuje...</p>
     </div>
 
-    
 
     <!-- Service Worker -->
     <script>
@@ -49,4 +56,5 @@
 
 </body>
 </html>
+
 
