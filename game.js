@@ -1,159 +1,108 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const scoreBoard = document.getElementById('scoreboard');
-const inputBox = document.getElementById('answerInput');
-const micBtn = document.getElementById('micBtn');
-
-let bombs = [];
-let active = false;
 let score = 0;
-let bombCount = 0;
-const totalBombs = 15;
-const fallSpeed = 1.3;
-const bombRadius = 32;
-let recognition = null;
+let taskCount = 0;
+const maxTasks = 15;
+let timeLeft = 10;
+let timer;
 
-// --- Start gry ---
-function startGame() {
-    document.getElementById('menu').style.display = 'none';
-    canvas.style.display = 'block';
-    document.getElementById('inputBox').style.display = 'block';
-    micBtn.style.display = 'block';
+const scoreBoard = document.getElementById("scoreboard");
+const canvas = document.getElementById("gameCanvas");
+const inputBox = document.getElementById("inputBox");
+const answerInput = document.getElementById("answerInput");
+const micBtn = document.getElementById("micBtn");
 
-    score = 0;
-    bombCount = 0;
-    scoreBoard.textContent = `Punkty: ${score}`;
-    active = true;
+let ctx = canvas.getContext("2d");
+let currentA, currentB;
 
-    spawnBomb();
-    gameLoop();
-}
+// 🎤 Rozpoznawanie mowy
+let recognition;
+if ("webkitSpeechRecognition" in window) {
+    recognition = new webkitSpeechRecognition();
+    recognition.lang = "pl-PL";
+    recognition.continuous = false;
+    recognition.interimResults = false;
 
-// --- Tworzenie nowej bomby ---
-function spawnBomb() {
-    if (!active || bombCount >= totalBombs) return;
-
-    const a = Math.floor(Math.random() * 10) + 1;
-    const b = Math.floor(Math.random() * 10) + 1;
-    const bomb = {
-        x: Math.random() * (canvas.width - bombRadius * 2) + bombRadius,
-        y: -50,
-        a, b,
-        result: a * b,
-        color: 'black',
-        timeLeft: 10 * 60 // ~10s przy 60 FPS
+    recognition.onresult = function(event) {
+        let result = event.results[0][0].transcript;
+        result = result.replace(/\D/g, ""); // zostaw tylko cyfry
+        answerInput.value = result;
+        checkAnswer();
     };
 
-    bombs.push(bomb);
-    bombCount++;
-
-    // Spawn nowej bomby co 2.5s
-    if (bombCount < totalBombs) {
-        setTimeout(spawnBomb, 2500);
-    }
+    micBtn.onclick = () => recognition.start();
+} else {
+    micBtn.style.display = "none"; // jeśli przeglądarka nie wspiera
 }
 
-// --- Główna pętla gry ---
-function gameLoop() {
-    if (!active) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    bombs.forEach(bomb => {
-        bomb.y += fallSpeed;
-        bomb.timeLeft--;
-
-        if (bomb.timeLeft <= 0) explodeFail(bomb);
-
-        ctx.beginPath();
-        ctx.arc(bomb.x, bomb.y, bombRadius, 0, Math.PI * 2);
-        ctx.fillStyle = bomb.color;
-        ctx.fill();
-        ctx.fillStyle = 'white';
-        ctx.font = '20px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(`${bomb.a} × ${bomb.b}`, bomb.x, bomb.y + 7);
-    });
-
-    bombs = bombs.filter(b => b.y < canvas.height + bombRadius);
-
-    if (bombCount >= totalBombs && bombs.length === 0) endGame();
-
-    requestAnimationFrame(gameLoop);
+// ▶️ Start gry
+function startGame() {
+    score = 0;
+    taskCount = 0;
+    scoreBoard.innerText = "Punkty: 0";
+    document.getElementById("menu").style.display = "none";
+    canvas.style.display = "block";
+    inputBox.style.display = "block";
+    answerInput.value = "";
+    answerInput.focus();
+    nextTask();
 }
 
-// --- Sprawdzenie odpowiedzi ---
-function checkAnswer(value) {
-    for (let b of bombs) {
-        if (b.result === value) {
-            score++;
-            scoreBoard.textContent = `Punkty: ${score}`;
-            explode(b);
-            return;
-        }
-    }
-}
-
-// --- Wybuch poprawny ---
-function explode(bomb) {
-    bomb.color = 'orange';
-    setTimeout(() => {
-        bombs = bombs.filter(x => x !== bomb);
-    }, 200);
-}
-
-// --- Wybuch niepoprawny / czas minął ---
-function explodeFail(bomb) {
-    bomb.color = 'red';
-    setTimeout(() => {
-        bombs = bombs.filter(x => x !== bomb);
-    }, 200);
-}
-
-// --- Koniec gry ---
-function endGame() {
-    active = false;
-    alert(`Koniec gry! Twój wynik: ${score}/${totalBombs}`);
-    location.reload();
-}
-
-// --- Klawiatura ---
-const inputField = document.getElementById('answerInput');
-inputBox.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-        const val = parseInt(e.target.value);
-        if (!isNaN(val)) checkAnswer(val);
-        e.target.value = '';
-    }
-});
-
-// --- Mikrofon ---
-micBtn.addEventListener('click', () => {
-    if (recognition) {
-        recognition.stop();
-        recognition = null;
-        micBtn.textContent = "🎤 Włącz mikrofon";
-        micBtn.classList.remove('active');
+// 🎮 Nowe zadanie
+function nextTask() {
+    if (taskCount >= maxTasks) {
+        endGame();
         return;
     }
 
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return alert("Twoja przeglądarka nie obsługuje rozpoznawania mowy.");
+    taskCount++;
 
-    recognition = new SR();
-    recognition.lang = 'pl-PL';
-    recognition.continuous = true;
+    currentA = Math.floor(Math.random() * 10) + 1;
+    currentB = Math.floor(Math.random() * 10) + 1;
 
-    micBtn.textContent = "🎧 Nasłuchuję...";
-    micBtn.classList.add('active');
+    drawTask(`${currentA} × ${currentB}`);
 
-    recognition.onresult = e => {
-        const transcript = e.results[e.results.length - 1][0].transcript;
-        const num = parseInt(transcript.replace(/\D/g, ''));
-        if (!isNaN(num)) checkAnswer(num);
-    };
+    answerInput.value = "";
+    timeLeft = 10;
+    startTimer();
+}
 
-    recognition.start();
+// ⏳ Timer
+function startTimer() {
+    clearInterval(timer);
+    timer = setInterval(() => {
+        timeLeft--;
+        drawTask(`${currentA} × ${currentB}   (${timeLeft}s)`);
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            nextTask();
+        }
+    }, 1000);
+}
+
+// 🧠 Sprawdź odpowiedź
+function checkAnswer() {
+    const userAnswer = parseInt(answerInput.value);
+    if (userAnswer === currentA * currentB) {
+        score++;
+        scoreBoard.innerText = "Punkty: " + score;
+    }
+    nextTask();
+}
+
+answerInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") checkAnswer();
 });
 
+// 🎨 Wyświetlanie zadania na canvasie
+function drawTask(text) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = "60px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+}
 
+// 🏁 Koniec gry
+function endGame() {
+    clearInterval(timer);
+    drawTask(`Koniec! Wynik: ${score}/${maxTasks}`);
+    inputBox.style.display = "none";
+}
