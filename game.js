@@ -73,7 +73,16 @@ if ("webkitSpeechRecognition" in window) {
 
 }
 
- 
+ function resizeCanvas(){
+  const containerWidth = document.getElementById(game-container).clientWidth;
+  canvas.width = containerWidth * 0.9;
+  canvas.height = canvas.width * 0.75;
+  if (currentA && currentB) {
+   drawTask('${currentA} x ${currentB} (${timeLeft || 10}s)');
+  }
+ }
+
+window.addEventListener(resize, resize
 
 // ▶️ Start gry
 
@@ -284,4 +293,5 @@ function endGame() {
     createConfetti();
 
 }
+
 
