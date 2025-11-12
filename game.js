@@ -9,6 +9,8 @@ let timeLeft = 10;
 
 let timer;
 
+let leaderboard[];
+
  
 
 const scoreBoard = document.getElementById("scoreboard");
@@ -293,7 +295,20 @@ function endGame() {
 
     createConfetti();
 
+    leaderboard.push(score);
+    leaderboard.sort((a,b) => b-a);
+    leaderboard = leaderboard.slice(0, 5);
+
+    const list = document.getElementById("leaderboardList);
+    list.innerHTML= "";
+    leaderboard.forEach((s, i) => {
+     const li = document.createElement("li");
+     li.innerText = '#${i + 1}: {s} punktów;
+      list.appendChild(li);
+    })
+document.getElementById("leaderboard").style.display = "block";
 }
+
 
 
 
