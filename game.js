@@ -74,7 +74,7 @@ if ("webkitSpeechRecognition" in window) {
 }
 
  function resizeCanvas(){
-  const containerWidth = document.getElementById(game-container).clientWidth;
+  const containerWidth = document.getElementById("game-container").clientWidth;
   canvas.width = containerWidth * 0.9;
   canvas.height = canvas.width * 0.75;
   if (currentA && currentB) {
@@ -82,7 +82,7 @@ if ("webkitSpeechRecognition" in window) {
   }
  }
 
-window.addEventListener(resize, resize)
+window.addEventListener("resize", resizeCanvas)
 
 // ▶️ Start gry
 
@@ -201,6 +201,7 @@ function checkAnswer() {
         scoreBoard.innerText = "Punkty: " + score;
 
         createConfetti();
+        nextTask();
 
     } else {
 
@@ -293,6 +294,7 @@ function endGame() {
     createConfetti();
 
 }
+
 
 
 
