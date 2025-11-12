@@ -82,7 +82,7 @@ if ("webkitSpeechRecognition" in window) {
   }
  }
 
-window.addEventListener(resize, resize
+window.addEventListener(resize, resize)
 
 // ▶️ Start gry
 
@@ -293,5 +293,6 @@ function endGame() {
     createConfetti();
 
 }
+
 
 
