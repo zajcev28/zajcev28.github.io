@@ -299,7 +299,7 @@ function endGame() {
     leaderboard.sort((a,b) => b-a);
     leaderboard = leaderboard.slice(0, 5);
 
-    const list = document.getElementById("leaderboardList);
+    const list = document.getElementById("leaderboardList");
     list.innerHTML= "";
     leaderboard.forEach((s, i) => {
      const li = document.createElement("li");
@@ -308,6 +308,7 @@ function endGame() {
     })
 document.getElementById("leaderboard").style.display = "block";
 }
+
 
 
 
