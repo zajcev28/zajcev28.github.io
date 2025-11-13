@@ -15,7 +15,7 @@
         .fade-in {
         animation: fadeIn 0.3s ease-in-out;
         }
-        @kayframes fadeIn {
+        @keyframes fadeIn {
             from {opacity:0; scale(0.9);}
             to {opacity:1; transform: scale(1);}
         }
@@ -44,7 +44,7 @@
             top: 0;
             left: 0;
             height: 6px;
-            background: lenear-gradient(90deg, #00ff88, #ff0088);
+            background: linear-gradient(90deg, #00ff88, #ff0088);
             transition: width 1s linear;
             width: 100%;
             z-index: 1000;
@@ -229,7 +229,7 @@ button:active {
         <button onclick="restartGame()"> Zagraj ponownie</button>
     </div>
         <div id="menu">
-            <button onclick=startGame()> 
+            <button onclick="startGame()"> 
                 Start game </button>
         </div>
     <canvas id="gameCanvas" width="800" height="600"
@@ -253,6 +253,7 @@ button:active {
 
 </body>
 </html>
+
 
 
 
