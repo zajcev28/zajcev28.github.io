@@ -9,7 +9,7 @@ let timeLeft = 10;
 
 let timer;
 
-let leaderboard[];
+let leaderboard = [];
 
  
 
@@ -308,6 +308,7 @@ function endGame() {
     })
 document.getElementById("leaderboard").style.display = "block";
 }
+
 
 
 
