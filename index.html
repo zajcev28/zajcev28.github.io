@@ -216,9 +216,48 @@ button:active {
 
 
     </style>
+    <script>
+/* Łapanie błędów JS */
+window.onerror = function (msg, src, line, col, err) {
+    const errorBox = document.getElementById("error-box");
+    if (errorBox) {
+        errorBox.style.display = "block";
+        errorBox.innerText += 
+            "ERROR: " + msg + "\n" +
+            "SOURCE: " + src + "\n" +
+            "LINE: " + line + ":" + col + "\n" +
+            (err ? "STACK: " + err.stack : "") +
+            "\n-----------------------\n";
+    } else {
+        alert("JS ERROR:\n" + msg + "\n" + src + ":" + line);
+    }
+};
+
+/* Łapanie błędów z Promise (np. await) */
+window.addEventListener("unhandledrejection", function (event) {
+    const errorBox = document.getElementById("error-box");
+    const msg = event.reason;
+    if (errorBox) {
+        errorBox.style.display = "block";
+        errorBox.innerText += 
+            "UNHANDLED PROMISE ERROR: " + msg + "\n" +
+            (msg.stack ? "STACK: " + msg.stack : "") +
+            "\n-----------------------\n";
+    } else {
+        alert("PROMISE ERROR:\n" + msg);
+    }
+});
+</script>
+
+
 </head>
 <body>
-
+<!-- Pole do wyświetlania błędów -->
+<div id="error-box"
+     style="display:none; white-space: pre-wrap; padding:10px; 
+            margin:10px; background:#300; color:#fff; 
+            border:2px solid red; font-size:14px;">
+</div>
     <h1>Witaj, Daniel! 👋</h1>
     <p>Przygotuj się na Matematyczne Bomby! 💣</p>
 
@@ -253,6 +292,7 @@ button:active {
 
 </body>
 </html>
+
 
 
 
