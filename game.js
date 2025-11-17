@@ -303,11 +303,12 @@ function endGame() {
     list.innerHTML= "";
     leaderboard.forEach((s, i) => {
      const li = document.createElement("li");
-     li.innerText = '#${i + 1}: ${s} punktów';
+     li.innerText = `#${i + 1}: ${s} punktów`;
       list.appendChild(li);
     })
 document.getElementById("leaderboard").style.display = "block";
 }
+
 
 
 
