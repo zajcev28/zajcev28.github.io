@@ -80,7 +80,7 @@ if ("webkitSpeechRecognition" in window) {
   canvas.width = containerWidth * 0.9;
   canvas.height = canvas.width * 0.75;
   if (currentA && currentB) {
-   drawTask('${currentA} x ${currentB} (${timeLeft || 10}s)');
+   drawTask(`${currentA} x ${currentB} (${timeLeft || 10}s)`);
   }
  }
 
@@ -308,6 +308,7 @@ function endGame() {
     })
 document.getElementById("leaderboard").style.display = "block";
 }
+
 
 
 
