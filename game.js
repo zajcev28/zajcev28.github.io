@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentTask = { a, b, result: a + b };
         taskEl.textContent = `${a} + ${b} = ?`;
+        timerEl.textContent = timeLeft + "s";
     }
 
     function checkAnswer() {
@@ -95,3 +96,4 @@ document.addEventListener("DOMContentLoaded", () => {
         requestAnimationFrame(frame);
     }
 });
+
