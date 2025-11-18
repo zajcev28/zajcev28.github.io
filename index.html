@@ -3,304 +3,107 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Matematyczne Bomby</title>
-
-    <!-- Manifest dla PWA -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Ikona aplikacji -->
-    <link rel="icon" href="icon.png">
+    <title>Matematyczne Bomby – Daniel</title>
 
     <style>
-        .fade-in {
-        animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from {opacity:0; scale(0.9);}
-            to {opacity:1; transform: scale(1);}
-        }
-        .flash {
-            background-color: #ffb3b3;
-            transition: background-color 0.3s;
-        }
-        .confetti {
-            position:fixed;
-            top: 0;
-            width: 10px;
-            height: 10px;
-            opacity: 0.9;
-            animation: fall linear forwards;
-            z-index: 9999;
-        }
-        @keyframes fall {
-            to {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #eef3ff;
         }
 
-        #timeBar{
-            position:fixed;
-            top: 0;
-            left: 0;
-            height: 6px;
-            background: linear-gradient(90deg, #00ff88, #ff0088);
-            transition: width 1s linear;
-            width: 100%;
-            z-index: 1000;
-            display: none; 
+        #game box {
+            margin-top: 20px;
         }
-        #timeBar.active {
-            display: block;
+
+        #task {
+            font-size: 2em;
+            margin: 20px 0;
+            font-weight: bold;
         }
-        
-body {
 
-    font-family: 'Segoe UI', Arial, sans-serif;
-
-    text-align: center;
-
-    margin: 0;
-
-    padding: 10px;
-
-    background: linear-gradient(to bottom right, #f1f1f1, #dceeff);
-
-    min-height: 100vh;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-}
-
- 
-
-#game-container {
-
-    background: white;
-
-    padding: 20px;
-
-    border-radius: 12px;
-
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-
-    display: inline-block;
-
-    width: 90%;
-
-    max-width: 800px;
-
-    box-sizing: border-box;
-
-}
-
- 
-
-/* 🔢 Canvas automatycznie się dopasowuje */
-
-#gameCanvas {
-
-    width: 100%;
-
-    height: auto;
-
-    border: 1px solid #ccc;
-
-    margin-top: 10px;
-
-}
-
- 
-
-/* 📱 Inputy i przyciski - duże i wygodne do dotyku */
-
-#inputBox {
-
-    margin-top: 15px;
-
-}
-
- 
-
-#answerInput {
-
-    width: 80%;
-
-    max-width: 300px;
-
-    padding: 12px;
-
-    font-size: 1.2em;
-
-    border-radius: 8px;
-
-    border: 2px solid #888;
-
-    text-align: center;
-
-}
-
- 
-
-button {
-
-    background: #007bff;
-
-    color: white;
-
-    border: none;
-
-    padding: 12px 20px;
-
-    border-radius: 8px;
-
-    font-size: 1em;
-
-    cursor: pointer;
-
-    transition: background 0.2s;
-
-}
-
-button:hover {
-
-    background: #0056c9;
-
-}
-
-button:active {
-
-    background: #0044a3;
-
-}
-
- 
-
-/* 📏 Media queries dla mniejszych ekranów */
-
-@media (max-width: 600px) {
-
-    h1 {
-
-        font-size: 1.4em;
-
-    }
-
-    #answerInput {
-
-        width: 95%;
-
-        font-size: 1.1em;
-
-    }
-
-    #gameCanvas {
-
-        height: auto;
-
-    }
-
-    #scoreboard {
-
-        font-size: 1.2em;
-
-        margin-top: 10px;
-
-    }
-
-}
-
+        #answer {
+            padding: 10px;
+            font-size: 1.4em;
+            width: 120px;
+            text-align: center;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-size: 1.3em;
+            height: 28px;
+        }
+
+        #animationBox {
+            margin: 20px auto;
+            width: 40px;
+            height: 40px;
+            background: red;
+            border-radius: 8px;
+        }
+
+        .shake {
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-8px); }
+            100% { transform: translateX(0); }
+        }
+
+        #timer {
+            font-size: 1.6em;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 18px;
+            font-size: 1.2em;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 8px;
+            margin: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #005fcc;
+        }
 
     </style>
-    <script>
-/* Łapanie błędów JS */
-window.onerror = function (msg, src, line, col, err) {
-    const errorBox = document.getElementById("error-box");
-    if (errorBox) {
-        errorBox.style.display = "block";
-        errorBox.innerText += 
-            "ERROR: " + msg + "\n" +
-            "SOURCE: " + src + "\n" +
-            "LINE: " + line + ":" + col + "\n" +
-            (err ? "STACK: " + err.stack : "") +
-            "\n-----------------------\n";
-    } else {
-        alert("JS ERROR:\n" + msg + "\n" + src + ":" + line);
-    }
-};
-
-/* Łapanie błędów z Promise (np. await) */
-window.addEventListener("unhandledrejection", function (event) {
-    const errorBox = document.getElementById("error-box");
-    const msg = event.reason;
-    if (errorBox) {
-        errorBox.style.display = "block";
-        errorBox.innerText += 
-            "UNHANDLED PROMISE ERROR: " + msg + "\n" +
-            (msg.stack ? "STACK: " + msg.stack : "") +
-            "\n-----------------------\n";
-    } else {
-        alert("PROMISE ERROR:\n" + msg);
-    }
-});
-</script>
-
-
 </head>
 <body>
-<!-- Pole do wyświetlania błędów -->
-<div id="error-box"
-     style="display:none; white-space: pre-wrap; padding:10px; 
-            margin:10px; background:#300; color:#fff; 
-            border:2px solid red; font-size:14px;">
-</div>
+
     <h1>Witaj, Daniel! 👋</h1>
-    <p>Przygotuj się na Matematyczne Bomby! 💣</p>
+    <p>Rozwiąż 15 przykładów z mnożenia zanim skończy się czas!</p>
 
-    <div id="game-container">
-    <div id="leaderboard" style="display:none">
-        <h2>Tablica wyników</h2>
-        <ol id=leaderboardList></ol>
-        <button id="restartBtn"> Zagraj ponownie</button>
-    </div>
-        <div id="menu">
-            <button id="startBtn"> 
-                Start game </button>
-        </div>
-    <canvas id="gameCanvas" width="800" height="600"
-        style="display:none; border:1px solid #ccc;"></canvas>
-    <div id="scoreboard">Punkty: 0</div>
-    <div id="inputBox" style="display:none;">
-    <input type="text" id="answerInput" placeholder="Wpisz wynik">
-    </div>
-    <button id="micBtn"> Wlacz mikrofon</button>
-        <p>Gra się ładuje...</p>
-    </div>
+    <!-- TIMER -->
+    <div id="timer">10s</div>
 
+    <!-- ZADANIE MATEMATYCZNE -->
+    <div id="task">Kliknij Start</div>
 
-    <!-- Service Worker -->
-    <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("service-worker.js");
-        }
-    </script>
-    <script src="game.js" defer></script>
+    <!-- WYNIK UŻYTKOWNIKA -->
+    <input id="answer" type="number" placeholder="?" autocomplete="off" />
+
+    <!-- KOMUNIKATY -->
+    <div id="result"></div>
+
+    <!-- ANIMACJA (czerwony kwadrat jeżdżący) -->
+    <div id="animationBox"></div>
+
+    <!-- PRZYCISKI -->
+    <button id="startBtn">Start</button>
+    <button id="micBtn">🎤 Mikrofon</button>
+
+    <!-- SKRYPT GRY -->
+    <script src="game.js"></script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
