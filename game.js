@@ -34,6 +34,36 @@ function drawBomb() {
     ctx.fill();
 }
 
+// ======= ANIMACJA WYBUCHU =======
+function explodeBomb(callback) {
+    let radius = 40;
+    let maxRadius = 150;
+    let alpha = 1;
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // kula ognia
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, ${Math.floor(80 + radius)}, 0, ${alpha})`;
+        ctx.fill();
+
+        radius += 8;
+        alpha -= 0.05;
+
+        if (radius <= maxRadius && alpha > 0) {
+            requestAnimationFrame(animate);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (callback) callback();
+        }
+    }
+
+    animate();
+}
+
+
 // ======= GENERATOR ZADAŃ =======
 function newQuestion() {
     currentA = Math.floor(Math.random() * 10) + 1;
@@ -61,30 +91,42 @@ function newQuestion() {
     }, 1000);
 }
 
-// ======= SPRAWDZANIE ODPOWIEDZI =======
 function checkAnswer(timeout = false) {
     clearInterval(timerInterval);
 
     const correct = currentA * currentB;
     const userAnswer = parseInt(answerInput.value);
 
-    if (timeout) {
-        resultEl.textContent = `⏳ Czas minął! Poprawna odpowiedź: ${correct}`;
-    } else if (userAnswer === correct) {
-        resultEl.textContent = "✔ Dobrze!";
-        score++;
-    } else {
-        resultEl.textContent = `✖ Źle! Poprawna odpowiedź: ${correct}`;
+    // Zła odpowiedź lub timeout → WYBUCH
+    if (timeout || userAnswer !== correct) {
+        resultEl.textContent = timeout
+            ? `⏳ Czas minął! Poprawna odpowiedź: ${correct}`
+            : `✖ Źle! Poprawna odpowiedź: ${correct}`;
+
+        explodeBomb(() => {
+            questionCount++;
+            if (questionCount < 15) {
+                newQuestion();
+            } else {
+                endGame();
+            }
+        });
+
+        return;
     }
 
-    questionCount++;
+    // Dobra odpowiedź
+    resultEl.textContent = "✔ Dobrze!";
+    score++;
 
+    questionCount++;
     if (questionCount < 15) {
-        setTimeout(newQuestion, 1200);
+        setTimeout(newQuestion, 800);
     } else {
         endGame();
     }
 }
+
 
 // ======= KONIEC GRY =======
 function endGame() {
@@ -130,3 +172,4 @@ if (window.SpeechRecognition) {
 } else {
     console.log("Rozpoznawanie mowy niedostępne w tej przeglądarce.");
 }
+
