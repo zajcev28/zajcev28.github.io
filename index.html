@@ -3,106 +3,100 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Matematyczne Bomby – Daniel</title>
+    <title>Matematyczne Bomby</title>
 
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background: #eef2ff;
+            margin: 0;
             padding: 20px;
-            background: #eef3ff;
         }
 
-        #game box {
-            margin-top: 20px;
+        #gameContainer {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            max-width: 700px;
+            margin: auto;
         }
 
-        #task {
-            font-size: 2em;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-
-        #answer {
-            padding: 10px;
+        #answerInput {
             font-size: 1.4em;
-            width: 120px;
+            padding: 10px;
+            width: 200px;
             text-align: center;
-        }
-
-        #result {
-            margin-top: 15px;
-            font-size: 1.3em;
-            height: 28px;
-        }
-
-        #animationBox {
-            margin: 20px auto;
-            width: 40px;
-            height: 40px;
-            background: red;
-            border-radius: 8px;
-        }
-
-        .shake {
-            animation: shake 0.3s;
-        }
-
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            50% { transform: translateX(8px); }
-            75% { transform: translateX(-8px); }
-            100% { transform: translateX(0); }
-        }
-
-        #timer {
-            font-size: 1.6em;
-            margin: 10px 0;
+            margin-top: 10px;
         }
 
         button {
-            padding: 10px 18px;
+            margin-top: 15px;
+            padding: 12px 25px;
             font-size: 1.2em;
-            border: none;
             background: #007bff;
             color: white;
+            border: none;
             border-radius: 8px;
-            margin: 8px;
             cursor: pointer;
         }
 
         button:hover {
-            background: #005fcc;
+            background: #0056d0;
         }
 
+        #gameCanvas {
+            border: 1px solid #555;
+            margin-top: 20px;
+            width: 100%;
+            height: auto;
+        }
+
+        #result {
+            font-size: 1.4em;
+            margin-top: 15px;
+            min-height: 40px;
+        }
+
+        #task {
+            font-size: 2em;
+            margin-top: 15px;
+        }
+
+        #timer {
+            font-size: 1.6em;
+            margin-top: 5px;
+            color: #d00;
+        }
     </style>
 </head>
+
 <body>
 
-    <h1>Witaj, Daniel! 👋</h1>
-    <p>Rozwiąż 15 przykładów z mnożenia zanim skończy się czas!</p>
+    <div id="gameContainer">
+        <h1>Matematyczne Bomby 💣</h1>
 
-    <!-- TIMER -->
-    <div id="timer">10s</div>
+        <!-- ZADANIE -->
+        <div id="task">Naciśnij START</div>
 
-    <!-- ZADANIE MATEMATYCZNE -->
-    <div id="task">Kliknij Start</div>
+        <!-- TIMER -->
+        <div id="timer"></div>
 
-    <!-- WYNIK UŻYTKOWNIKA -->
-    <input id="answer" type="number" placeholder="?" autocomplete="off" />
+        <!-- CANVAS BOMBY -->
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
 
-    <!-- KOMUNIKATY -->
-    <div id="result"></div>
+        <!-- POLE ODPOWIEDZI -->
+        <input type="text" id="answerInput" placeholder="Podaj wynik">
 
-    <!-- ANIMACJA (czerwony kwadrat jeżdżący) -->
-    <div id="animationBox"></div>
+        <!-- START -->
+        <br>
+        <button id="startBtn">Start</button>
 
-    <!-- PRZYCISKI -->
-    <button id="startBtn">Start</button>
-    <button id="micBtn">🎤 Mikrofon</button>
+        <!-- WYNIKI -->
+        <div id="result"></div>
+    </div>
 
-    <!-- SKRYPT GRY -->
     <script src="game.js"></script>
 
 </body>
