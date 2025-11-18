@@ -1,307 +1,132 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Matematyczne Bomby</title>
+// ======= ELEMENTY DOM =======
+const taskEl = document.getElementById("task");
+const answerInput = document.getElementById("answerInput");
+const timerEl = document.getElementById("timer");
+const resultEl = document.getElementById("result");
+const startBtn = document.getElementById("startBtn");
 
-    <!-- Manifest dla PWA -->
-    <link rel="manifest" href="manifest.json">
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-    <!-- Ikona aplikacji -->
-    <link rel="icon" href="icon.png">
+// ======= ZMIENNE GRY =======
+let currentA, currentB;
+let questionCount = 0;
+let score = 0;
+let timeLeft = 10;
+let timerInterval;
 
-    <style>
-        .fade-in {
-        animation: fadeIn 0.3s ease-in-out;
+// ======= BOMBA – ANIMACJA =======
+function drawBomb() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2, canvas.height / 2, 40, 0, Math.PI * 2);
+    ctx.fillStyle = "black";
+    ctx.fill();
+
+    // lont
+    ctx.fillStyle = "orange";
+    ctx.fillRect(canvas.width / 2 + 35, canvas.height / 2 - 5, 20, 10);
+
+    // płomień (migający)
+    ctx.fillStyle = (timeLeft % 2 === 0) ? "yellow" : "red";
+    ctx.beginPath();
+    ctx.arc(canvas.width / 2 + 60, canvas.height / 2, 8, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+// ======= GENERATOR ZADAŃ =======
+function newQuestion() {
+    currentA = Math.floor(Math.random() * 10) + 1;
+    currentB = Math.floor(Math.random() * 10) + 1;
+
+    taskEl.textContent = `${currentA} × ${currentB} = ?`;
+
+    answerInput.value = "";
+    answerInput.focus();
+
+    timeLeft = 10;
+    timerEl.textContent = `Czas: ${timeLeft}s`;
+
+    drawBomb();
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = `Czas: ${timeLeft}s`;
+        drawBomb();
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            checkAnswer(true);
         }
-        @keyframes fadeIn {
-            from {opacity:0; scale(0.9);}
-            to {opacity:1; transform: scale(1);}
-        }
-        .flash {
-            background-color: #ffb3b3;
-            transition: background-color 0.3s;
-        }
-        .confetti {
-            position:fixed;
-            top: 0;
-            width: 10px;
-            height: 10px;
-            opacity: 0.9;
-            animation: fall linear forwards;
-            z-index: 9999;
-        }
-        @keyframes fall {
-            to {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        #timeBar{
-            position:fixed;
-            top: 0;
-            left: 0;
-            height: 6px;
-            background: linear-gradient(90deg, #00ff88, #ff0088);
-            transition: width 1s linear;
-            width: 100%;
-            z-index: 1000;
-            display: none; 
-        }
-        #timeBar.active {
-            display: block;
-        }
-        
-body {
-
-    font-family: 'Segoe UI', Arial, sans-serif;
-
-    text-align: center;
-
-    margin: 0;
-
-    padding: 10px;
-
-    background: linear-gradient(to bottom right, #f1f1f1, #dceeff);
-
-    min-height: 100vh;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
+    }, 1000);
 }
 
- 
-
-#game-container {
-
-    background: white;
-
-    padding: 20px;
-
-    border-radius: 12px;
-
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-
-    display: inline-block;
-
-    width: 90%;
-
-    max-width: 800px;
-
-    box-sizing: border-box;
-
-}
-
- 
-
-/* 🔢 Canvas automatycznie się dopasowuje */
-
-#gameCanvas {
-
-    width: 100%;
-
-    height: auto;
-
-    border: 1px solid #ccc;
-
-    margin-top: 10px;
-
-}
-
- 
-
-/* 📱 Inputy i przyciski - duże i wygodne do dotyku */
-
-#inputBox {
-
-    margin-top: 15px;
-
-}
-
- 
-
-#answerInput {
-
-    width: 80%;
-
-    max-width: 300px;
-
-    padding: 12px;
-
-    font-size: 1.2em;
-
-    border-radius: 8px;
-
-    border: 2px solid #888;
-
-    text-align: center;
-
-}
-
- 
-
-button {
-
-    background: #007bff;
-
-    color: white;
-
-    border: none;
-
-    padding: 12px 20px;
-
-    border-radius: 8px;
-
-    font-size: 1em;
-
-    cursor: pointer;
-
-    transition: background 0.2s;
-
-}
-
-button:hover {
-
-    background: #0056c9;
-
-}
-
-button:active {
-
-    background: #0044a3;
-
-}
-
- 
-
-/* 📏 Media queries dla mniejszych ekranów */
-
-@media (max-width: 600px) {
-
-    h1 {
-
-        font-size: 1.4em;
-
-    }
-
-    #answerInput {
-
-        width: 95%;
-
-        font-size: 1.1em;
-
-    }
-
-    #gameCanvas {
-
-        height: auto;
-
-    }
-
-    #scoreboard {
-
-        font-size: 1.2em;
-
-        margin-top: 10px;
-
-    }
-
-}
-
-
-    </style>
-    <script>
-/* Łapanie błędów JS */
-window.onerror = function (msg, src, line, col, err) {
-    const errorBox = document.getElementById("error-box");
-    if (errorBox) {
-        errorBox.style.display = "block";
-        errorBox.innerText += 
-            "ERROR: " + msg + "\n" +
-            "SOURCE: " + src + "\n" +
-            "LINE: " + line + ":" + col + "\n" +
-            (err ? "STACK: " + err.stack : "") +
-            "\n-----------------------\n";
+// ======= SPRAWDZANIE ODPOWIEDZI =======
+function checkAnswer(timeout = false) {
+    clearInterval(timerInterval);
+
+    const correct = currentA * currentB;
+    const userAnswer = parseInt(answerInput.value);
+
+    if (timeout) {
+        resultEl.textContent = `⏳ Czas minął! Poprawna odpowiedź: ${correct}`;
+    } else if (userAnswer === correct) {
+        resultEl.textContent = "✔ Dobrze!";
+        score++;
     } else {
-        alert("JS ERROR:\n" + msg + "\n" + src + ":" + line);
+        resultEl.textContent = `✖ Źle! Poprawna odpowiedź: ${correct}`;
     }
-};
 
-/* Łapanie błędów z Promise (np. await) */
-window.addEventListener("unhandledrejection", function (event) {
-    const errorBox = document.getElementById("error-box");
-    const msg = event.reason;
-    if (errorBox) {
-        errorBox.style.display = "block";
-        errorBox.innerText += 
-            "UNHANDLED PROMISE ERROR: " + msg + "\n" +
-            (msg.stack ? "STACK: " + msg.stack : "") +
-            "\n-----------------------\n";
+    questionCount++;
+
+    if (questionCount < 15) {
+        setTimeout(newQuestion, 1200);
     } else {
-        alert("PROMISE ERROR:\n" + msg);
+        endGame();
+    }
+}
+
+// ======= KONIEC GRY =======
+function endGame() {
+    taskEl.textContent = "Koniec gry!";
+    timerEl.textContent = "";
+    resultEl.textContent = `Twój wynik: ${score}/15`;
+}
+
+// ======= START GRY =======
+startBtn.addEventListener("click", () => {
+    score = 0;
+    questionCount = 0;
+    resultEl.textContent = "";
+    newQuestion();
+});
+
+// ======= KLAWIATURA ENTER =======
+answerInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+        checkAnswer();
     }
 });
-</script>
 
+// ======= ROZPOZNAWANIE MOWY =======
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-</head>
-<body>
-<!-- Pole do wyświetlania błędów -->
-<div id="error-box"
-     style="display:none; white-space: pre-wrap; padding:10px; 
-            margin:10px; background:#300; color:#fff; 
-            border:2px solid red; font-size:14px;">
-</div>
-    <h1>Witaj, Daniel! 👋</h1>
-    <p>Przygotuj się na Matematyczne Bomby! 💣</p>
+if (window.SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = "pl-PL";
+    recognition.interimResults = false;
 
-    <div id="game-container">
-    <div id="leaderboard" style="display:none">
-        <h2>Tablica wyników</h2>
-        <ol id=leaderboardList></ol>
-        <button id="restartBtn"> Zagraj ponownie</button>
-    </div>
-        <div id="menu">
-            <button id="startBtn"> 
-                Start game </button>
-        </div>
-    <canvas id="gameCanvas" width="800" height="600"
-        style="display:none; border:1px solid #ccc;"></canvas>
-    <div id="scoreboard">Punkty: 0</div>
-    <div id="inputBox" style="display:none;">
-    <input type="text" id="answerInput" placeholder="Wpisz wynik">
-    </div>
-    <button id="micBtn"> Wlacz mikrofon</button>
-        <p>Gra się ładuje...</p>
-    </div>
+    recognition.onresult = e => {
+        answerInput.value = e.results[0][0].transcript.replace(/\D/g, "");
+        checkAnswer();
+    };
 
+    recognition.onerror = () => {};
 
-    <!-- Service Worker -->
-    <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("service-worker.js");
-        }
-    </script>
-    <script src="game.js" defer></script>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // kliknięcie w pole uruchamia nasłuch
+    answerInput.addEventListener("click", () => {
+        recognition.start();
+    });
+} else {
+    console.log("Rozpoznawanie mowy niedostępne w tej przeglądarce.");
+}
