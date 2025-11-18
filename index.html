@@ -1,132 +1,104 @@
-// ======= ELEMENTY DOM =======
-const taskEl = document.getElementById("task");
-const answerInput = document.getElementById("answerInput");
-const timerEl = document.getElementById("timer");
-const resultEl = document.getElementById("result");
-const startBtn = document.getElementById("startBtn");
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Matematyczne Bomby</title>
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+    <!-- Manifest PWA -->
+    <link rel="manifest" href="manifest.json">
 
-// ======= ZMIENNE GRY =======
-let currentA, currentB;
-let questionCount = 0;
-let score = 0;
-let timeLeft = 10;
-let timerInterval;
-
-// ======= BOMBA – ANIMACJA =======
-function drawBomb() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, 40, 0, Math.PI * 2);
-    ctx.fillStyle = "black";
-    ctx.fill();
-
-    // lont
-    ctx.fillStyle = "orange";
-    ctx.fillRect(canvas.width / 2 + 35, canvas.height / 2 - 5, 20, 10);
-
-    // płomień (migający)
-    ctx.fillStyle = (timeLeft % 2 === 0) ? "yellow" : "red";
-    ctx.beginPath();
-    ctx.arc(canvas.width / 2 + 60, canvas.height / 2, 8, 0, Math.PI * 2);
-    ctx.fill();
-}
-
-// ======= GENERATOR ZADAŃ =======
-function newQuestion() {
-    currentA = Math.floor(Math.random() * 10) + 1;
-    currentB = Math.floor(Math.random() * 10) + 1;
-
-    taskEl.textContent = `${currentA} × ${currentB} = ?`;
-
-    answerInput.value = "";
-    answerInput.focus();
-
-    timeLeft = 10;
-    timerEl.textContent = `Czas: ${timeLeft}s`;
-
-    drawBomb();
-
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        timerEl.textContent = `Czas: ${timeLeft}s`;
-        drawBomb();
-
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            checkAnswer(true);
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #e7f3ff;
+            text-align: center;
+            padding: 20px;
         }
-    }, 1000);
-}
 
-// ======= SPRAWDZANIE ODPOWIEDZI =======
-function checkAnswer(timeout = false) {
-    clearInterval(timerInterval);
+        #gameContainer {
+            margin: 0 auto;
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
 
-    const correct = currentA * currentB;
-    const userAnswer = parseInt(answerInput.value);
+        #task {
+            font-size: 32px;
+            margin: 20px 0;
+        }
 
-    if (timeout) {
-        resultEl.textContent = `⏳ Czas minął! Poprawna odpowiedź: ${correct}`;
-    } else if (userAnswer === correct) {
-        resultEl.textContent = "✔ Dobrze!";
-        score++;
-    } else {
-        resultEl.textContent = `✖ Źle! Poprawna odpowiedź: ${correct}`;
-    }
+        #timer {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 10px;
+            color: #003f8a;
+        }
 
-    questionCount++;
+        #result {
+            font-size: 20px;
+            margin: 15px;
+            min-height: 25px;
+        }
 
-    if (questionCount < 15) {
-        setTimeout(newQuestion, 1200);
-    } else {
-        endGame();
-    }
-}
+        input {
+            font-size: 22px;
+            padding: 10px;
+            width: 120px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
 
-// ======= KONIEC GRY =======
-function endGame() {
-    taskEl.textContent = "Koniec gry!";
-    timerEl.textContent = "";
-    resultEl.textContent = `Twój wynik: ${score}/15`;
-}
+        button {
+            padding: 12px 25px;
+            background: #0077ff;
+            color: white;
+            border: none;
+            font-size: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
 
-// ======= START GRY =======
-startBtn.addEventListener("click", () => {
-    score = 0;
-    questionCount = 0;
-    resultEl.textContent = "";
-    newQuestion();
-});
+        button:hover {
+            background: #005fcc;
+        }
 
-// ======= KLAWIATURA ENTER =======
-answerInput.addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-        checkAnswer();
-    }
-});
+        canvas {
+            margin-top: 20px;
+            background: transparent;
+        }
+    </style>
+</head>
 
-// ======= ROZPOZNAWANIE MOWY =======
-window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+<body>
+    <h1>💣 Matematyczne Bomby</h1>
 
-if (window.SpeechRecognition) {
-    const recognition = new SpeechRecognition();
-    recognition.lang = "pl-PL";
-    recognition.interimResults = false;
+    <div id="gameContainer">
+        <button id="startBtn">START</button>
 
-    recognition.onresult = e => {
-        answerInput.value = e.results[0][0].transcript.replace(/\D/g, "");
-        checkAnswer();
-    };
+        <div id="task">Kliknij START</div>
 
-    recognition.onerror = () => {};
+        <input type="number" id="answerInput" placeholder="?" />
 
-    // kliknięcie w pole uruchamia nasłuch
-    answerInput.addEventListener("click", () => {
-        recognition.start();
-    });
-} else {
-    console.log("Rozpoznawanie mowy niedostępne w tej przeglądarce.");
-}
+        <div id="timer"></div>
+
+        <div id="result"></div>
+
+        <canvas id="gameCanvas" width="300" height="200"></canvas>
+    </div>
+
+    <!-- Service Worker -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js")
+                .catch(err => console.log("SW error:", err));
+        }
+    </script>
+
+    <!-- GRA -->
+    <script src="game.js"></script>
+
+</body>
+</html>
