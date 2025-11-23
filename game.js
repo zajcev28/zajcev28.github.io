@@ -100,21 +100,10 @@ function checkAnswer(timeout = false) {
 
     // Zła odpowiedź lub timeout → WYBUCH
     if (timeout || userAnswer !== correct) {
-        resultEl.textContent = timeout
-            ? `⏳ Czas minął! Poprawna odpowiedź: ${correct}`
-            : `✖ Źle! Poprawna odpowiedź: ${correct}`;
- successGif.style.display = "none";
-        
-        explodeBomb(() => {
-            questionCount++;
-            if (questionCount < 15) {
-                newQuestion();
-            } else {
-                endGame();
-            }
-        });
-
-        return;
+         successGif.style.display = "none";
+         resultEl.textContent =` Poprawna odpowiedź: ${correct}`;
+         explodeBomb(()=> newQuestion());
+         return;
     }
 
     // Dobra odpowiedź
@@ -127,11 +116,11 @@ function checkAnswer(timeout = false) {
     setTimeout(() => {
         successGif.style.display = "none";
     if (questionCount < 15) {
-        setTimeout(newQuestion, 800);
+        newQuestion();
     } else {
         endGame();
     }
-}, 1000);
+}, 1500);
 questionCount++;
 }
 
@@ -179,5 +168,6 @@ if (window.SpeechRecognition) {
 } else {
     console.log("Rozpoznawanie mowy niedostępne w tej przeglądarce.");
 }
+
 
 
