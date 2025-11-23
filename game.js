@@ -4,6 +4,7 @@ const answerInput = document.getElementById("answerInput");
 const timerEl = document.getElementById("timer");
 const resultEl = document.getElementById("result");
 const startBtn = document.getElementById("startBtn");
+const successGif = document.getElementById("successGif");
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -102,7 +103,8 @@ function checkAnswer(timeout = false) {
         resultEl.textContent = timeout
             ? `⏳ Czas minął! Poprawna odpowiedź: ${correct}`
             : `✖ Źle! Poprawna odpowiedź: ${correct}`;
-
+ successGif.style.display = "none";
+        
         explodeBomb(() => {
             questionCount++;
             if (questionCount < 15) {
@@ -119,14 +121,19 @@ function checkAnswer(timeout = false) {
     resultEl.textContent = "✔ Dobrze!";
     score++;
 
-    questionCount++;
+    successGif.style.display = "block";
+
+    
+    setTimeout(() => {
+        successGif.style.display = "none";
     if (questionCount < 15) {
         setTimeout(newQuestion, 800);
     } else {
         endGame();
     }
+}, 1000);
+questionCount++;
 }
-
 
 // ======= KONIEC GRY =======
 function endGame() {
@@ -172,4 +179,5 @@ if (window.SpeechRecognition) {
 } else {
     console.log("Rozpoznawanie mowy niedostępne w tej przeglądarce.");
 }
+
 
